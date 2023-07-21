@@ -4,6 +4,7 @@ use std::path::Path;
 use std::fs;
 use std::io::prelude::*;
 use regex::Regex;
+use warp_page::obsidian_styles::styles::specpag;
 
 fn is_an_image(name: String) -> bool {
     println!("inside is_an_image and value of name: {:?}", name);
@@ -24,11 +25,17 @@ struct Parse {
 
 impl Parse {
 
-    fn page_styling(&self) -> Self {
-        let style_value = "<div style='background: lightgreen; margin: -10px; padding: 20px; max-width: caclc(100% - 10px);
-        min-height:1000px;'>";
-        let new_contents = style_value.to_string()+&self.contents+"</div>";
-        let p = Parse{contents: new_contents};
+    fn specific_page_styling(&self, entry_path: String) -> Self {
+        println!("inside specific_page_styling and value of entry_path: {:?}", entry_path.clone());
+        let mut p = Parse { contents: self.contents.clone() };
+        for (key, value) in specpag().iter() {
+            if entry_path.clone() == key.to_string() {
+                let style_value = "<div style = '".to_string( )+ &value.clone() + "'>";
+                let new_contents = style_value.to_string()+&self.contents+"</div>";
+                println!("value of new_contents in key, value: {:?}", new_contents);
+                p = Parse{contents: new_contents};
+            }
+        }
         p
     }
 
@@ -39,7 +46,25 @@ impl Parse {
     }
 
     #[allow(dead_code)]
-    fn add_headers_to_page(&mut self) -> Self {
+    fn add_h2_to_page(&mut self) -> Self {
+        let p = Parse { contents: self.contents.clone() };
+        let re = Regex::new(r#"<br.>##\s+(.+)<br.>"#).unwrap();
+        let text = p.contents.clone();
+        let mut cleantext = p.contents.clone();
+        for capture in re.captures_iter(&text) {
+            let uncleaned_capture = &capture[0].to_string();
+            let boldstring = format!(
+                "<h2>{}</h2>",
+                &capture[0].to_string().replace("##", "")
+            );
+            cleantext = cleantext.replace(uncleaned_capture, &boldstring);
+        }
+        let p = Parse { contents: cleantext };
+        p
+    }
+
+    #[allow(dead_code)]
+    fn add_h1_to_page(&mut self) -> Self {
         let p = Parse { contents: self.contents.clone() };
         let re = Regex::new(r#"<br.>\s*#([^<]+)<br.>"#).unwrap();
         let text = p.contents.clone();
@@ -83,8 +108,8 @@ impl Parse {
         for capture in re.captures_iter(&text) {
             let uncleaned_capture = &capture[0].to_string();
             let boldstring = format!(
-                "<span style='font-weight: bold;'>{}</span>",
-                &capture[0].to_string().replace("**", "")
+                "<span style='font-style: italic;'>{}</span>",
+                &capture[0].to_string().replace("*", "")
             );
             cleantext = cleantext.replace(uncleaned_capture, &boldstring);
         }
@@ -180,16 +205,18 @@ fn store_images(entry_path:String){
 }
 
 fn parse_file(entry_path: String){
+    println!("value of entry_path in parse_file: {:?}", entry_path);
     if !is_an_image(entry_path.clone().to_string()){
         let contents = fs::read_to_string(entry_path.clone())
             .expect("Should have been able to read the file");
         let parsing_contents = Parse{contents: contents};
         let parsed_contents = parsing_contents
-            .page_styling()
+            .specific_page_styling(entry_path.clone())
             .add_bold_text_to_page()
             .add_italic_text_to_page()
             .carriage_return()
-            .add_headers_to_page()
+            .add_h2_to_page()
+            .add_h1_to_page()
             .add_picture_to_page()
             .link_to_another_page();
         create_page(entry_path.clone(), parsed_contents.contents.clone());
