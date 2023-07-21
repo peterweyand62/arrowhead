@@ -1,0 +1,20 @@
+Here are a list of cliches. It's here that I'll list cliches in narrative in order to not repeat them. 
+
+This is also a section for a generalized critique of the story. Anything that is "write first, here are the revisions" as opposed to "here's the idea, and then here is the writing" goes here.
+
+To the extent that in a [[Books#^ae645f|Sartrian]] lack/lacking/lacked system of anguish in freedom we are bound to that we overtly recognize we are bound to become cliched to the extent that we do not operate in some degree of bad faith. Or something.
+
+I have *way* to many signs in my novel. There has to be a way to fix this as it shouldn't be a part of the narrative. ^37be9d
+
+How is what I'm writing similar to the idea of 
+
+[[Books#^a7c03a| I have to make this not look just like the plot from Neuromancer]] ^1c6fb2
+
+JK Rowling wrote Harry Potter from a collection of post it notes. ^2d9ebe
+
+This is the closest to an inner solar system hard science fiction story that I have read in a while. The only other example that is similar is [[Television#^643a32|The Expanse]] so I have to make sure that this isn't the same "steal a spaceship and then go on a detective story" type of narrative. The other space opera stories that this is similar to is [[Television#^e269c2|Star Trek]] and [[Television#^b53e49|Firefly]]. Not to mention [[Movies#^9473a4|Star Wars]]. The space ships in the novel closely resemble the RPG [[Role Playing Games#^8effd6|Spell Jammer]]. So to the extent that I incorporate elements from each of these stories they need to be dissimilar enough that they aren't the same thing. 
+	- A planet is blown up in Star Wars, and also in this case. However, the Great Pluto Disaster isn't a primary story arc and it doesn't have anything to do with a princess.
+	- In the Expanse a group of bandits steal a spaceship. Here, no one steals a spaceship and goes on an adventure. Rather it's a group of people that travel across the galaxy and are in and out of spaceships, gravity wells and see several of the major events of the narrative. So there's a quest element, but none of them own a spaceship. So there's a higher element of risk in some ways for the main characters. There's also an omniscient perspective of several of the captains and space battles. (Question - Should one of them own a spaceship? No - spaceships are basically too expensive to own and no one person owns a spaceship unless they're a part of a syndicate. Also it's too hard to run by one person in space. How much does a spaceship here represent freedom and are therefore necessary for that aspect of the plot? Ok, in the story there should be one person that owns a spaceship that's essentially a private asteroid with thrusters on it that's sailing through the shipping lanes. Maybe it's a bar flying through space and he runs it with a bunch of other people - this is an open question but here's [[Characters#^dff0d4|an idea]]).
+	- In Firefly it's a group of bandits that are fighting the evil empire. They also have a spaceship. So there has to be a quest element, but there isn't an evil empire - MGMT is seen as a sort of necessary evil if anything and each gravity well is out for themselves. Also the grunters are not a major part of the plot arc other than that they exist. Is there a scene where a grunter is killed or someone is shot into grunter space? How is this similar to the reavers from Firefly?
+	- Spell Jammer has sail ships, but there is no magic in this setting other than the subjective/objective where reality dissipates and people can't necessarily tell what's happening. 
+	- The closes ships to those in Star Trek would be the anomaly ships from [[Characters#^0277ea|The Third Armada]], but they are primarily concerned with policing and therefore aren't the same as an exploratory body.

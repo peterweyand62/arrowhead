@@ -1,0 +1,43 @@
+
+<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+
+<!-- <div id="app">{{ message }}</div> -->
+<div>
+    <img src="/vue_img/eyes.png" style="width: 50vw;"/>
+    <p>This is me. Boo.</p>
+    <p>Hi. I'm Peter.</p>
+    <p>My current email is peterweyand62@gmail.com.</p>
+    <p>My current phone is 16282425139.</p>
+    <p>I make websites sometimes.</p>
+    <p>I'm currently looking for work. Please reach out if you have anything that looks like it could be up my alley.</p>
+</div>
+<a href="/">to home page </a>
+
+<script>
+
+  const { createApp, ref } = Vue
+
+  createApp({
+    setup() {
+      const message = ref('Hello vue!')
+      return {
+        message
+      }
+    }
+  }).mount('#app')
+</script>
+
+<style>
+    body, html{
+        background: rgba(100,100,100,0.8);
+        margin: 0;
+        padding: 5px;
+        color: lightgrey;
+    }
+    a{
+        color: red;
+    }
+    body{
+        padding: 10px;
+    }
+</style>

@@ -1,0 +1,34 @@
+**Pine Winter Zone** - In the pine winter zone the character archetypes are reversed or re-imagined. Each one of them has a mirror image that then corresponds to some allusion, but I haven't decided what that is yet ^967662
+- Ecologists - Specifically fighting the androids. These are the people in the madhouse that are engineering their own drugs. 
+- Androids - these are some sort of fungoid growth that's cut out of the mountain from under the Ipscanoey Falls Hospital and are considered Evil. 
+- Engineers - Pirate free lance radio engineers and signal operators and television station hackers. Dorks with oscilloscopes. 
+- MGMT - Flanderization of signs and billboards throughout the PWZ. The work of anarchists in the PWZ is the subconscious of the MGMT on the space ships and settings of the main novel and there isn't a specific characterization. 
+- Writers - Characters that have died in the main world and in the underworld of the PWZ they start writing the script of what is taking place in the PWZ. They end up becoming the mushrooms of the entrephauna. 
+
+# City Ships
+
+**Greater Plutonian Hive Cooperative IV** - A hollowed out asteroid the GPHCIV is an approximately 5 mile on a side block containing 200,000 people and is the smallest city ship.  ^d2a219
+
+**Cleveland, OH** - The only city that was managed to be uplifted (the necessary mass to do so was replaced to maintain Earth gravity (although it was minor)). The cluster resembles the city in its' entirety save for the large self healing domes that protect the city from space radiation and can polarize to create night and day conditions. Pilgrimage area for the Disorder (Order of the Gestalts). Cleveland, OH is one of if not the only place in which there has been no diaspora at all, or the diaspora is itself not recognized. Of the 500,000 people that are living in Cleveland, OH all of them both recognize and don't recognize that the Gestalt-Diaspora has occurred. How is this similar to the movie [[Movies#^58942b|Dark City]]? Is this a cliche?
+
+**NeoGaia** - A giant living structure, the newest of the city states (having 1,000,000 people), composed almost entirely of biological material as a living rainforest, save for the necessary machinery to maintain the anomaly. The ship was created after the implosion of Pluto in the event that the Earth imploded due to an anomaly event. NeoGaia contains almost every endangered specie on Earth and many that have been bio-reengineered and cloned. Pilgrimage area for the Order of the Beast.   ^465b6e
+
+# Planets
+
+Here are the names of the planets in order - 
+**Mercury** - High iron content, hardest to reach in solar system from Earth (currently 2023),  - associated with Hermes.
+Venus 
+Earth 
+**Mars** - There are three main locations on Mars. They are - 
+	- **Valles Marineris** - The location of city the city state Saturnalia 234 and colonies 1 through 4. 
+	- **Olympus Mons** - Home to the Large Rail Gun, this large array of magnet rail systems shoots nickel, iron, and sulfur into orbit to be collected by the barge system. The transport system is the size of France and takes several hours to speed up the necessary packages for deployment. Each package has ion thrusters, and onboard small nuclear power plant, and enough reaction mass for small maneuvering, but no large quantity of mass for chemical rockets. Around Olympus Mons are mostly robotic mining facilities while there's a rail network that connects Olympus Mons to the colonies for field repair workers and engineers.
+	- [Hellas Planitia](https://en.wikipedia.org/wiki/Hellas_Planitia) - Ice mining and water reclamation facilities. There is no life on Mars - completely skip that. Say it was a huge let down when it happened for the first colonists and then everyone got over it and turned to the humanistic religion of [[Religion#^b85a36|The Order of The Fallen]]. 
+	***Moons**: Deimos and Phobos*
+		**Phobos** - The space station is built by hollowing out the crater and building tunnels throughout the moon while maintaining the same mass (in order to maintain the orbit). The mass that has been taken out of the moon has been offset by a structure built on top of Stickney crater which includes docking and refueling armature for the station in addition to living quarters that round out the curvature of the moon. The other craters on the moon have been domed over as green houses for biologics. The space station is in the orbital path of several satellites which are used as jump points in the [[Religion#^4d34d8|Void Star religion]]. [[Technologies#^10d233|See moon stations]].   ^8a013d
+Asteroid Belt 
+Jupiter
+Saturn - Large planet with a low density, 95 as massive as the earth with the same surface gravity and an upper atmosphere compose of mostly hydrogen and helium. Saturn should have a mining colony for gasses to be used throughout the rest of the system.
+Uranus
+**Neptune** - Consider the moon Triton as a place to put a moon base. There moon always faces the planet and it's close than the Sun (too cold).
+**Pluto Cluster** - Following the Great Pluto Disaster when the planet was destroyed, the planet is now an asteroid region of orbiting moons and debris. It's unknown what caused the destruction of the planet, although the most likely cause is that someone drove an anomaly into the planet. Who did so and why is unknown (and won't be explained in the novel).  ^14f472
+

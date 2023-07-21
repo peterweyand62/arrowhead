@@ -1,0 +1,70 @@
+
+<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+
+<div style="position: relative; height: 500px; width: 500px;">
+    <div style="z-index: 1; position: absolute; top: 0; left:0;">
+        <img src="/vue_img/frontpagebackground.png" style="width: 50vw;"/>
+    </div>
+    <div style="z-index: 2; position: absolute; top: 30%; left:25%;">
+        <img src="/vue_img/attention.png" style="width: 50vw;"/>
+    </div>
+    <div style="z-index: 3; position: absolute; top: 60%; left:40%;">
+        <img src="/vue_img/obsidian.png" style="width: 80vw;"/>
+    </div>
+</div>
+<a href="/about">to about page</a>
+
+<p>
+    Right. So the graphics have nothing to do with anything other than to tell you that yes.
+</p>
+<p>
+   I, Peter Weyand, have created an Obsidian Website Creator. 
+</p>
+<p>
+   It's straightforward. You create an <a href="https://obsidian.md/">Obsidian project</a> and then you can put it into this program to pop open a linked and styled website.
+</p>
+<p>
+    Including pictures!
+</p> 
+<p>
+    It's just a markdown parser, but on the other hand it's easy enough to reason about that you can tweak it for your own purposes.
+</p>
+<p>
+    I'm also writing a story, and so some of my notes about the story are in there.
+</p>
+<p>
+    I make garbage websites. <a href="https://patientplatypus6.github.io">This is another one</a>.
+</p>
+
+<p>
+    Here's the <a href="/html/Story.html">story</a>. 
+</p>
+
+
+<script>
+  const { createApp, ref } = Vue
+
+  createApp({
+    setup() {
+      const message = ref('Hello vue!')
+      return {
+        message
+      }
+    }
+  }).mount('#app')
+</script>
+
+<style>
+    body, html{
+        background: rgba(100,100,100,0.8);
+        margin: 0;
+        padding: 5px;
+        color: lightgrey;
+    }
+    a{
+        color: red;
+    }
+    body{
+        padding: 10px;
+    }
+</style>
