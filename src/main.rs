@@ -281,5 +281,5 @@ async fn main() {
         .or(about)
     );
 
-    warp::serve(routes).run(([127, 0, 0, 1], 3030)).await;
+    warp::serve(routes).run(([127, 0, 0, 1], 80)).await;
 }
