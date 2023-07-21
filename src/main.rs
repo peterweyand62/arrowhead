@@ -1,28 +1,9 @@
 #![deny(warnings)]
-use std::sync::Arc;
-use serde::{Serialize};
-use serde_json::json;
-use handlebars::Handlebars;
 use warp::Filter;
 use std::path::Path;
 use std::fs;
 use std::io::prelude::*;
 use regex::Regex;
-
-struct WithTemplate<T: Serialize> {
-    name: &'static str,
-    value: T,
-}
-
-fn render<T>(template: WithTemplate<T>, hbs: Arc<Handlebars<'_>>) -> impl warp::Reply
-where
-    T: Serialize,
-{
-    let render = hbs
-        .render(template.name, &template.value)
-        .unwrap_or_else(|err| err.to_string());
-    warp::reply::html(render)
-}
 
 fn is_an_image(name: String) -> bool {
     println!("inside is_an_image and value of name: {:?}", name);
@@ -239,123 +220,7 @@ fn read_files(){
 #[tokio::main]
 async fn main() {
 
-    let document_list = "
-        <script src='https://unpkg.com/vue@3/dist/vue.global.js'></script>
-        <div id='document_list'>TESTING: {% message %}</div>
-        <script>
-            const { createApp } = Vue
-
-            export default createApp({
-                data() {
-                    return {
-                        message: 'Hello from document_list'
-                    }
-                }, 
-                delimiters: ['{%', '%}'],
-            }).mount('#document_list')
-        </script>
-    ";
-
-    let template = "
-                    <script src='https://unpkg.com/vue@3/dist/vue.global.js'></script>
-
-
-                    <div id='app'>
-                        <h1>
-                            Welcome to Web Page
-                        </h1>
-                        <h3>
-                            This is a static site generator porting Obsidian to the Web! 
-                        </h3>
-                    
-                        <p>
-                            This project allows you to take an <a href='https//www.obsidian.md'>Obsidian.md</a> project, upload it and then edit the project using Vue.js in a WYSIWYG (what you see is what you get).
-                            For the moment the project is primarily built around get requests, although post requests may be in the works (not sure).
-                        </p>
-
-                        <p>
-                            Here are the major project guidelines - 
-                        </p>
-                        
-                        <ul>
-                            <li>
-                                Statically upload Obsidian files - done!
-                            </li>
-                            <li>
-                                WYSIWYG modification of files using Vue.js - TODO
-                            </li>
-                            <li>
-                                Login/Auth for multiple users - todo
-                            </li>
-                            <li>
-                                Socketing real time collaboration on file editing - TODO (needs login/auth as well).
-                            </li>
-                            <li>
-                                General css work on UI/UX for the dashboard interface - TODO
-                            </li>
-                        </ul>
-                       
-                        <div>
-                            testing a message: {% message %}
-                        </div>
-                        
-                        <div>
-                            {{html_files.0}}
-                        </div>
-
-                        <div>
-                            there should be a document list here
-                            <Document_List />
-                        </div>
-
-                        <ul>
-                            <li v-for='value in {{html_files}}'>
-                                {{ value }}
-                            </li>
-                        </ul>
-
-                        <div>
-                            [[html_files]]
-                        </div>
-                    
-                    </div>
-                        
-                    <script>
-                        const { createApp } = Vue
-                        import Document_List from './document_list.html'
-                        let html_files = {{html_files}};
-
-                        console.log('the value of html_files:', {{html_files}});
-
-                        createApp({
-                            data() {
-                                return {
-                                    message: 'Hello Vue!'
-                                }
-                            },
-                            delimiters: ['{%', '%}'],
-                            mounted(){
-                                console.log('inside the mounted function');
-                                this.$forceUpdate()
-                            }
-                        }).mount('#app')
-
-                    </script>
-                    ";
     read_files();
-    
-    let mut hb = Handlebars::new();
-    hb.register_template_string("template.html", template)
-        .unwrap();    
-    hb.register_template_string("document_list.html", document_list)
-        .unwrap();
-    let hb = Arc::new(hb);
-
-    let handlebars = move |with_template| render(with_template, hb.clone());
-
-    println!("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^");
-    println!("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^");
-    println!("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^");
     
     let paths_html = fs::read_dir("./src/obsidian_html").unwrap();
     let paths_img = fs::read_dir("./src/obsidian_img").unwrap();
@@ -374,20 +239,6 @@ async fn main() {
     println!("value of html_vec {:?}", html_vec.clone());
     println!("value of img_vec  {:?}", img_vec.clone());
 
-    println!("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^");
-    println!("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^");
-    println!("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^");
-
-
-
-    let document_list = warp::path("document_list")
-        .map(move || WithTemplate {
-            name: "document_list.html",
-            value: json!({})
-        })
-        .map(handlebars.clone());
-
-
     let hi = warp::path("hi").map(|| "Hello, World!");
     let home_page = warp::get().and(warp::fs::dir("src/vue/home"));
     let about = warp::path("about").and(warp::fs::dir("src/vue/about"));
@@ -401,7 +252,6 @@ async fn main() {
         .or(img)
         .or(vue_img)
         .or(about)
-        .or(document_list)
     );
 
     warp::serve(routes).run(([127, 0, 0, 1], 3030)).await;
