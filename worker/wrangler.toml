@@ -1,0 +1,5 @@
+name = "worker"
+compatibility_date = "2023-07-22"
+main = "worker.js"
+[build]
+command = "./target/release/warp_page"
