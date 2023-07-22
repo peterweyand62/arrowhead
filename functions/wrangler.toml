@@ -1,0 +1,4 @@
+name = "my-worker"
+compatibility_date = "2023-07-22"
+[build]
+command = "./target/release/warp_page"
