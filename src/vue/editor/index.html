@@ -1,0 +1,100 @@
+
+<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+
+<div id="app">
+    <a href="/">to home page </a>
+    <br/>
+
+    <p>
+        This is the editor.
+    </p>
+
+    <div>
+        <span style="font-weight: bold; color: black; background: rgba(200,200,200,0.5); padding: 5px; margin: 5px;">
+            Selected A Page To Edit: {{ data.selectedOption }}
+        </span>
+        <div style="height: 10px;"></div>
+        <label for="selectOption">Select an option:</label>
+        <select id="selectOption" v-model="selectedOption" @change="handleOptionChange(selectedOption)">
+            <option value="">-- Select --</option>
+            <option v-for="option in data.html_vec" :key="option">{{ option }}</option>
+        </select>
+    </div>
+</div>
+
+
+<script>
+
+  const { createApp, ref, reactive, onMounted } = Vue;
+
+  createApp({
+    setup() {
+      let data = reactive({
+        html_vec: {},
+        selectedOption: 'No Page Currently Selected To Edit', 
+      });
+
+      const handleOptionChange = (selectedValue) => {
+        console.log("value of selecteValue: ", selectedValue);
+        let dummydata = data;
+        dummydata.selectedOption = selectedValue;
+        data = dummydata;
+
+        fetch("http://localhost:3030/return_html_page", {
+            method: "POST",
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                name: "peter"
+            })
+        })
+        .then((response) => {
+            return response.json();
+        })
+        .then((jsonObject) => {
+            console.log("Parsed JSON object: ", jsonObject);
+        })
+        .catch((error) => {
+            console.log("this is the value of th")
+        });
+
+      };
+
+      onMounted(() => {
+        console.log("inside onMounted");
+        fetch('http://localhost:3030/get_doc_list')
+          .then(response => response.json())
+          .then(res => {
+            // Store the fetched data in a reactive property
+            data.html_vec = res.data;
+            console.log("value of message: ", data);
+          })
+          .catch(error => {
+            console.error('Error fetching data:', error);
+          });
+      });
+
+      return {
+        data,
+        handleOptionChange
+      }
+    }
+  }).mount('#app')
+</script>
+
+<style>
+    body, html{
+        background: rgba(100,100,100,0.8);
+        margin: 0;
+        padding: 5px;
+        color: lightgrey;
+    }
+    a{
+        color: red;
+    }
+    body{
+        padding: 10px;
+    }
+</style>

@@ -1,9 +1,22 @@
 #![deny(warnings)]
-use warp::Filter;
+use warp::{Filter};
+// use warp::reply::Response;
+// use warp::hyper::Body;
+// use warp::http::StatusCode;
+use serde_json::json;
+// use warp::Rejection;
 use std::path::Path;
 use std::fs;
 use std::io::prelude::*;
+use serde_json::Value;
+// use warp::reply::Json;
+
 use regex::Regex;
+// use serde::{Serialize, Serializer};
+use serde_derive::{Serialize, Deserialize};
+// use std::error::Error;
+// use warp::reply::json;
+// use warp::Reply;
 use warp_page::obsidian_styles::styles::specpag;
 
 fn is_an_image(name: String) -> bool {
@@ -190,6 +203,7 @@ impl Parse {
     }
 }
 
+
 fn create_page(entry_path: String, contents: String){
    let new_path = entry_path
        .replace("obsidian_project", "obsidian_html")
@@ -243,6 +257,60 @@ fn read_files(){
     }
 }
 
+fn get_doc_list() -> warp::reply::Json {
+    let paths_html = fs::read_dir("./src/obsidian_html").unwrap();
+    let mut html_vec: Vec<String> = vec![];
+    for path in paths_html {
+        html_vec.append(&mut vec![path.unwrap().path().display().to_string()]);
+    }
+    let response_json = json!({
+        "data": html_vec
+    });
+    warp::reply::json(&response_json)
+}
+
+// #[derive(Serialize)]
+// struct PostRequest {
+//     incoming_string: String,
+// }
+
+
+// impl Reply for PostRequest {
+//     fn into_response(self) -> warp::reply::Response {
+//         let html_string = fs::read_to_string(&self.incoming_string).expect("Should have been able to read the file");
+//         let response_json = json!({
+//             "data": html_string
+//         });
+//         warp::reply::json(&response_json).with_status(StatusCode::OK)
+//     }
+// }
+
+// impl warp::Reply for PostRequest {
+//     fn into_response(self) -> warp::reply::Response {
+//         let html_string = fs::read_to_string(&self.incoming_string.clone())
+//             .expect("Should have been able to read the file");
+//         let response_json = json!({
+//             "data": html_string
+//         });
+//         warp::reply::json(&response_json).with_status(StatusCode::OK)
+//     }
+// }
+
+// fn get_html_list() -> impl Filter<Extract = warp::reply::Json<PostRequest>, Error = warp::Rejection> {
+//     warp::path!("get_html_list")
+//         .and(warp::post())
+//         .and(warp::body::json())
+//         .map(|json: Json<PostRequest>| {
+//             let post_request = json.into_inner();
+//             println!("Received post request: {:?}", post_request);
+//             warp::reply::json(json)
+//         })
+// }
+
+#[derive(Deserialize, Serialize)]
+struct Employee {
+    name: String,
+}
 
 #[tokio::main]
 async fn main() {
@@ -272,13 +340,33 @@ async fn main() {
     let html = warp::path("html").and(warp::fs::dir("src/obsidian_html/"));
     let img = warp::path("img").and(warp::fs::dir("src/obsidian_img/"));
     let vue_img = warp::path("vue_img").and(warp::fs::dir("src/vue/assets/images"));
-    let routes = warp::get().and(
+    let editor = warp::path("editor").and(warp::fs::dir("src/vue/editor"));
+    let get_doc_list = warp::path("get_doc_list").map(|| get_doc_list());
+    let return_html_page = warp::path!("return_html_page")
+        .and(warp::post())
+        .and(warp::body::json())
+        .map(|data: Value| {
+            let response_json = json!({
+                "data": data["name"]
+            });
+            warp::reply::json(&response_json)
+        });
+
+    let cors = warp::cors()
+        .allow_any_origin()
+        .allow_methods(vec!["GET", "POST", "DELETE"]);
+
+    let routes = warp::any().and(
         home_page
         .or(hi)
         .or(html)
-        .or(img)
+        .or(editor)
+        .or(img)    
         .or(vue_img)
         .or(about)
+        .or(get_doc_list)
+        .or(return_html_page)
+        .with(cors)
     );
 
     warp::serve(routes).run(([127, 0, 0, 1], 3030)).await;

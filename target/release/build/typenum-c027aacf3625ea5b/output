@@ -1,3 +1,0 @@
-cargo:rerun-if-changed=build/main.rs
-cargo:rustc-env=TYPENUM_BUILD_CONSTS=/Users/peterweyand/Web_Page/target/release/build/typenum-c027aacf3625ea5b/out/consts.rs
-cargo:rustc-env=TYPENUM_BUILD_OP=/Users/peterweyand/Web_Page/target/release/build/typenum-c027aacf3625ea5b/out/op.rs
