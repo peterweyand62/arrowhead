@@ -269,43 +269,20 @@ fn get_doc_list() -> warp::reply::Json {
     warp::reply::json(&response_json)
 }
 
-// #[derive(Serialize)]
-// struct PostRequest {
-//     incoming_string: String,
-// }
-
-
-// impl Reply for PostRequest {
-//     fn into_response(self) -> warp::reply::Response {
-//         let html_string = fs::read_to_string(&self.incoming_string).expect("Should have been able to read the file");
-//         let response_json = json!({
-//             "data": html_string
-//         });
-//         warp::reply::json(&response_json).with_status(StatusCode::OK)
-//     }
-// }
-
-// impl warp::Reply for PostRequest {
-//     fn into_response(self) -> warp::reply::Response {
-//         let html_string = fs::read_to_string(&self.incoming_string.clone())
-//             .expect("Should have been able to read the file");
-//         let response_json = json!({
-//             "data": html_string
-//         });
-//         warp::reply::json(&response_json).with_status(StatusCode::OK)
-//     }
-// }
-
-// fn get_html_list() -> impl Filter<Extract = warp::reply::Json<PostRequest>, Error = warp::Rejection> {
-//     warp::path!("get_html_list")
-//         .and(warp::post())
-//         .and(warp::body::json())
-//         .map(|json: Json<PostRequest>| {
-//             let post_request = json.into_inner();
-//             println!("Received post request: {:?}", post_request);
-//             warp::reply::json(json)
-//         })
-// }
+fn return_html_page(data: Value) -> warp::reply::Json {
+    let incoming_json = json!({
+        "name": data["name"],
+        "path": data["path"]
+    });
+    println!("value of response_json: {:?}", incoming_json["path"]);
+    let contents = fs::read_to_string(incoming_json["path"].as_str().unwrap())
+        .expect("Should have been able to read the file");
+    let outgoing_json = json!({
+        "name": data["name"],
+        "html": contents
+    });
+    warp::reply::json(&outgoing_json)
+}
 
 #[derive(Deserialize, Serialize)]
 struct Employee {
@@ -346,10 +323,7 @@ async fn main() {
         .and(warp::post())
         .and(warp::body::json())
         .map(|data: Value| {
-            let response_json = json!({
-                "data": data["name"]
-            });
-            warp::reply::json(&response_json)
+            return_html_page(data)
         });
 
     let cors = warp::cors()

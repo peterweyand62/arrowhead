@@ -20,17 +20,53 @@
             <option v-for="option in data.html_vec" :key="option">{{ option }}</option>
         </select>
     </div>
+<!-- NOT UPDATING -->
+    <br/>
+    <div>
+        <div style="background: white; color: black; width:calc(100% + 10px)">
+            <div style="display: flex;">
+                <div style="display: inline-block; flex: 1;">
+                    <div v-html="data.html"></div>
+                </div>
+                <div style="display: inline-block; flex: 1; margin-top: -10px; margin-left: 10px;">
+                    <textarea v-model="data.html" placeholder="This is where you edit html text"
+                    style="height:calc(100% + 10px); width:100%; resize: none;"
+                    ></textarea>
+                </div>
+            </div>
+            <!-- <div style="display: inline-block; width: cacl(50% - 10px); margin-top: 5px;">
+                <div v-html="data.html"></div>
+            </div>
+            <div style="display: inline-block; width: calc(50% - 10px); margin-top: -5px;">
+                <textarea v-model="data.html" placeholder="This is where you edit html text"
+                style="height:100%; width:100%"
+                ></textarea>
+            </div> -->
+            <!-- <div style="display: flex;">
+                <div style="flex: 1;">
+                    <div v-html="data.html"></div>
+                </div>
+                <div style="flex: 1; margin-left: 20px; margin-top: -10px;">
+                    <textarea v-model="data.html" placeholder="This is where you edit html text"
+                    style="height:100%; width:100%"
+                    ></textarea>
+                </div>
+            </div> -->
+        </div>
+
+    </div>
 </div>
 
 
 <script>
 
-  const { createApp, ref, reactive, onMounted } = Vue;
+  const { createApp, ref, reactive, onMounted, watch} = Vue;
 
   createApp({
     setup() {
       let data = reactive({
         html_vec: {},
+        html: '',
         selectedOption: 'No Page Currently Selected To Edit', 
       });
 
@@ -38,7 +74,6 @@
         console.log("value of selecteValue: ", selectedValue);
         let dummydata = data;
         dummydata.selectedOption = selectedValue;
-        data = dummydata;
 
         fetch("http://localhost:3030/return_html_page", {
             method: "POST",
@@ -47,19 +82,23 @@
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                name: "peter"
+                name: "peter", 
+                path: selectedValue
             })
         })
         .then((response) => {
             return response.json();
         })
         .then((jsonObject) => {
-            console.log("Parsed JSON object: ", jsonObject);
+            dummydata.html = jsonObject.html;
+            data = dummydata;
+            //INCOMING DATA
+            console.log("Parsed JSON object html: ", jsonObject.html);
+            console.log("Parsed dummydata object html: ", dummydata.html);            console.log("Parsed data object html: ", data.html);
         })
         .catch((error) => {
-            console.log("this is the value of th")
+            console.log("this is the value of the error: ", error)
         });
-
       };
 
       onMounted(() => {
@@ -67,7 +106,6 @@
         fetch('http://localhost:3030/get_doc_list')
           .then(response => response.json())
           .then(res => {
-            // Store the fetched data in a reactive property
             data.html_vec = res.data;
             console.log("value of message: ", data);
           })
