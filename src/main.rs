@@ -1,23 +1,29 @@
 #![deny(warnings)]
 use warp::{Filter};
+use serde_json::json;
+use std::path::Path;
+use std::io;
+use std::fs;
+use std::fs::File;
+use std::io::prelude::*;
+use serde_json::Value;
+use std::os::unix::fs::PermissionsExt;
+use regex::Regex;
+use serde_derive::{Serialize, Deserialize};
+use warp_page::obsidian_styles::styles::specpag;
+use warp_page::rust_state::state;
+use scraper::{Html, Selector};
+// use html5ever::{parse_document};
+// use select::node::Node;
+// use std::error::Error;
+// use warp::reply::json;
+// use warp::reply::Json;
+// use warp::Reply;
+// use serde::{Serialize, Serializer};
+// use warp::Rejection;
 // use warp::reply::Response;
 // use warp::hyper::Body;
 // use warp::http::StatusCode;
-use serde_json::json;
-// use warp::Rejection;
-use std::path::Path;
-use std::fs;
-use std::io::prelude::*;
-use serde_json::Value;
-// use warp::reply::Json;
-
-use regex::Regex;
-// use serde::{Serialize, Serializer};
-use serde_derive::{Serialize, Deserialize};
-// use std::error::Error;
-// use warp::reply::json;
-// use warp::Reply;
-use warp_page::obsidian_styles::styles::specpag;
 
 fn is_an_image(name: String) -> bool {
     println!("inside is_an_image and value of name: {:?}", name);
@@ -196,13 +202,17 @@ impl Parse {
                     "</a>"
                 ].join("");
                 cleantext = cleantext.replace(uncleaned_capture, &anchor_string);
+                // make_site_map(
+                //     entry_path.clone().to_string(),
+                //     "/html/".to_string + &page_ref.get(0).unwrap(),
+                //     "".to_string() + &page_display.get(1).unwrap()
+                // );
             }
         }
         let p = Parse{contents: cleantext};
         p
     }
 }
-
 
 fn create_page(entry_path: String, contents: String){
    let new_path = entry_path
@@ -239,6 +249,17 @@ fn parse_file(entry_path: String){
     }
 }
 
+fn set_permissions(path: String){
+    let mut permissions = fs::metadata(&path)
+        .unwrap()
+        .permissions();
+
+    permissions.set_mode(0o777);
+
+    fs::set_permissions(&path, permissions)
+        .unwrap();
+}
+
 fn read_files(){
     let path = Path::new("./src/obsidian_project");
     match fs::remove_dir_all("./src/obsidian_html"){
@@ -251,6 +272,10 @@ fn read_files(){
     }
     fs::create_dir_all("./src/obsidian_html").unwrap();
     fs::create_dir_all("./src/obsidian_img").unwrap();
+
+    set_permissions("./src/obsidian_html".to_string());
+    set_permissions("./src/obsidian_img".to_string());
+    
     for entry in fs::read_dir(path).expect("Unable to list") {
         let entry = entry.expect("unable to get entry");
         parse_file(entry.path().display().to_string());
@@ -269,6 +294,43 @@ fn get_doc_list() -> warp::reply::Json {
     warp::reply::json(&response_json)
 }
 
+#[allow(dead_code)]
+fn make_site_map(mut site_map: state::VecSiteLinks) -> state::VecSiteLinks{
+    println!("inside make_site_map");
+    println!("this is the value of the site_map: {:?}", site_map);
+    let paths_html = fs::read_dir("./src/obsidian_html").unwrap();
+    for path in paths_html {
+        let cleaned_path = path.unwrap().path().display().to_string();
+        let contents = fs::read_to_string(cleaned_path.clone())
+            .expect("Should have been able to read the file");
+        let document = Html::parse_document(&contents);
+        let selector = Selector::parse("a").unwrap();
+        for element in document.select(&selector) {
+            println!("inner html: {:?}", element.inner_html());
+            println!("href: {:?}", element.value().attr("href").expect("attr not found").to_string());
+            site_map.add_vec(state::SiteLinks{
+                path: cleaned_path.to_string(), 
+                href: element.value().attr("href").expect("attr not found").to_string(),
+                disp: element.inner_html()
+            });
+        }
+    }
+    site_map.clone()
+}    
+
+
+fn get_site_map() -> warp::reply::Json {
+    let mut site_map = state::VecSiteLinks{
+        links: vec![]
+    };
+    site_map = make_site_map(site_map);
+    println!("value of site_map in get_site_map: {:?}", site_map);
+    let outgoing_json = json!({
+        "site_map": site_map
+    });
+    warp::reply::json(&outgoing_json)
+}
+
 fn return_html_page(data: Value) -> warp::reply::Json {
     let incoming_json = json!({
         "name": data["name"],
@@ -284,6 +346,40 @@ fn return_html_page(data: Value) -> warp::reply::Json {
     warp::reply::json(&outgoing_json)
 }
 
+fn update_html_page(data: Value) -> warp::reply::Json {
+    let incoming_json = json!({
+        "html": data["html"], 
+        "path": data["path"]
+    });
+    let path = incoming_json["path"].as_str().unwrap();
+    let html = incoming_json["html"].as_str().unwrap();
+    println!("value of path: {:?}", path.clone());
+    println!("value of html: {:?}", html.clone());
+
+    let path = Path::new(path.clone());
+    let mut file = match File::create(&path) {
+        Ok(file) => file,
+        Err(why) => panic!("couldn't open {}: {}", path.display(), why),
+    };
+
+    match file.write_all(html.clone().as_bytes()) {
+        Ok(_) => println!("Successfully wrote to the file."),
+        Err(why) => panic!("couldn't write to {}: {}", path.display(), why),
+    }
+
+    let contents = fs::read_to_string(path.clone())
+    .expect("Should have been able to read the file");
+
+    drop(file);
+
+    let outgoing_json = json!({
+        "html": contents
+    });
+    warp::reply::json(&outgoing_json)
+}
+
+
+
 #[derive(Deserialize, Serialize)]
 struct Employee {
     name: String,
@@ -292,8 +388,33 @@ struct Employee {
 #[tokio::main]
 async fn main() {
 
-    read_files();
-    
+    let mut input = String::new();
+
+    let mut inputtest = "-".to_string();
+    let mut firstinput = false;
+
+    //I should have multiple options here so that I can also read the .md files
+    //that are new and not replace any that are already in the system - 
+    //this would require more work as I would have to alter the above pipeline.
+    while inputtest != "y".to_string() && inputtest != "n".to_string() {
+        if firstinput == false{
+            firstinput = true;
+            println!("Would you like to read the .md files and replace the html? (y/n):");
+        }else{
+            input = "".to_string();
+            println!("Please enter only y or n as input:");
+        }
+        io::stdin().read_line(&mut input).expect("Failed to read line");
+        println!("You entered: {}", input.to_string());
+        inputtest = input.to_string().replace("\n", "");
+        println!("value of inputtest: {:?}", inputtest.to_string());
+        if inputtest.to_string() == "y".to_string() {
+            read_files();
+        }
+    } 
+
+    // println!("value of computed_site_map: {:?}", site_map);
+
     let paths_html = fs::read_dir("./src/obsidian_html").unwrap();
     let paths_img = fs::read_dir("./src/obsidian_img").unwrap();
 
@@ -319,11 +440,20 @@ async fn main() {
     let vue_img = warp::path("vue_img").and(warp::fs::dir("src/vue/assets/images"));
     let editor = warp::path("editor").and(warp::fs::dir("src/vue/editor"));
     let get_doc_list = warp::path("get_doc_list").map(|| get_doc_list());
+    let get_site_map = warp::path("get_site_map").map(|| {
+        get_site_map()
+    });
     let return_html_page = warp::path!("return_html_page")
         .and(warp::post())
         .and(warp::body::json())
         .map(|data: Value| {
             return_html_page(data)
+        });
+    let update_html_page = warp::path!("update_html_page")
+        .and(warp::post())
+        .and(warp::body::json())
+        .map(|data: Value| {
+            update_html_page(data)
         });
 
     let cors = warp::cors()
@@ -340,6 +470,8 @@ async fn main() {
         .or(about)
         .or(get_doc_list)
         .or(return_html_page)
+        .or(update_html_page)
+        .or(get_site_map)
         .with(cors)
     );
 

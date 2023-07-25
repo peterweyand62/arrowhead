@@ -26,32 +26,15 @@
         <div style="background: white; color: black; width:calc(100% + 10px)">
             <div style="display: flex;">
                 <div style="display: inline-block; flex: 1;">
-                    <div v-html="data.html"></div>
+                    <div v-html="data.html_backend"></div>
                 </div>
                 <div style="display: inline-block; flex: 1; margin-top: -10px; margin-left: 10px;">
-                    <textarea v-model="data.html" placeholder="This is where you edit html text"
+                    <textarea v-model="data.html_frontend" placeholder="This is where you edit html text"
                     style="height:calc(100% + 10px); width:100%; resize: none;"
+                    v-on:input="handleKeyPress($event.target.value)"
                     ></textarea>
                 </div>
             </div>
-            <!-- <div style="display: inline-block; width: cacl(50% - 10px); margin-top: 5px;">
-                <div v-html="data.html"></div>
-            </div>
-            <div style="display: inline-block; width: calc(50% - 10px); margin-top: -5px;">
-                <textarea v-model="data.html" placeholder="This is where you edit html text"
-                style="height:100%; width:100%"
-                ></textarea>
-            </div> -->
-            <!-- <div style="display: flex;">
-                <div style="flex: 1;">
-                    <div v-html="data.html"></div>
-                </div>
-                <div style="flex: 1; margin-left: 20px; margin-top: -10px;">
-                    <textarea v-model="data.html" placeholder="This is where you edit html text"
-                    style="height:100%; width:100%"
-                    ></textarea>
-                </div>
-            </div> -->
         </div>
 
     </div>
@@ -60,15 +43,44 @@
 
 <script>
 
-  const { createApp, ref, reactive, onMounted, watch} = Vue;
+  const { createApp, ref, reactive, onMounted, watch } = Vue;
 
   createApp({
     setup() {
       let data = reactive({
         html_vec: {},
-        html: '',
+        html_backend: '',
+        html_frontend: '',
+        lastkeypresstime: Date.now(),
         selectedOption: 'No Page Currently Selected To Edit', 
       });
+
+      const handleKeyPress = (someval) => {
+
+        fetch("http://localhost:3030/update_html_page", {
+            method: "POST",
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                path: data.selectedOption,
+                html: data.html_frontend
+            })
+        })
+        .then((response) => {
+            return response.json();
+        })
+        .then((jsonObject) => {
+            console.log("Parsed JSON object html: ", jsonObject.html);
+            let dummydata = data;
+            dummydata.html_backend = jsonObject.html;
+            data = dummydata;
+        })
+        .catch((error) => {
+            console.log("this is the value of the error: ", error)
+        });
+      }
 
       const handleOptionChange = (selectedValue) => {
         console.log("value of selecteValue: ", selectedValue);
@@ -90,11 +102,11 @@
             return response.json();
         })
         .then((jsonObject) => {
-            dummydata.html = jsonObject.html;
+            dummydata.html_backend = jsonObject.html;
+            dummydata.html_frontend = jsonObject.html;
             data = dummydata;
-            //INCOMING DATA
-            console.log("Parsed JSON object html: ", jsonObject.html);
-            console.log("Parsed dummydata object html: ", dummydata.html);            console.log("Parsed data object html: ", data.html);
+            console.log('value of dummydata: ', dummydata);
+            console.log('value of data: ', data);
         })
         .catch((error) => {
             console.log("this is the value of the error: ", error)
@@ -116,7 +128,8 @@
 
       return {
         data,
-        handleOptionChange
+        handleOptionChange, 
+        handleKeyPress
       }
     }
   }).mount('#app')
